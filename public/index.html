@@ -13,8 +13,8 @@ websocket.onopen = function() {
         $("#msgs").scrollTop($("#msgs")[0].scrollHeight);
     };
 }
-websocket.onclose = fuction(){
-	$('#error').empty().append("Lost Connection to websocket");
+websocket.onclose = function(){
+	$('#error').empty().append("Lost connection to websocket");
 }
 $(document).ready(function() {
     $("input").keypress(function(event) {
