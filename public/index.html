@@ -13,6 +13,9 @@ websocket.onopen = function() {
         $("#msgs").scrollTop($("#msgs")[0].scrollHeight);
     };
 }
+websocket.onclose = fuction(){
+	$('#error').empty().append("Lost Connection to websocket");
+}
 $(document).ready(function() {
     $("input").keypress(function(event) {
         if (event.which == 13) {
@@ -28,6 +31,7 @@ $(document).ready(function() {
 </head>
 <body>
     <div id="msgs" style="height:400px; overflow:auto"></div>
-    <input type="text" id="command" style="width:100%"/>
+    <input type="text" id="command" placeholder="#" style="width:100%"/>
+    <div id="error"></div>
 </body>
 </html>
