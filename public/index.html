@@ -10,6 +10,7 @@ var websocket = new WebSocket(server);
 websocket.onopen = function() {
     websocket.onmessage = function(message) {
         $('#msgs').append(message.data + "</br>");
+        $("#msgs").scrollTop($("#msgs")[0].scrollHeight);
     };
 }
 $(document).ready(function() {
@@ -18,7 +19,7 @@ $(document).ready(function() {
             event.preventDefault();
             var val = $("#command").val()
             console.log(val);
-            websocket.send(val);
+            websocket.send(val + "\n");
             $("#command").val('')
         }
     });

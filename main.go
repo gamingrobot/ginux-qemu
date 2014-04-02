@@ -2,14 +2,14 @@ package main
 
 import (
 	"bufio"
-	"fmt"
+	//"fmt"
 	"github.com/codegangsta/martini"
 	"github.com/gorilla/websocket"
 	"io"
 	"log"
 	"net/http"
+	//"os"
 	"os/exec"
-	"strings"
 )
 
 func main() {
@@ -24,13 +24,17 @@ func main() {
 			return
 		}
 		//spawn qemu
-		//cmd := exec.Command("qemu-system-arm", "-M", "versatilepb", "-m", "20M", "-nographic", "-readconfig", "qemu.conf")
-		cmd := exec.Command("echo", "tacos")
+		cmd := exec.Command("qemu-system-arm", "-M", "versatilepb", "-m", "20M", "-nographic", "-readconfig", "qemu.conf")
+		//cmd := exec.Command("bash")
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
 			log.Println(err)
 		}
 		go readLoop(stdout, ws)
+		stdin, err := cmd.StdinPipe()
+		if err != nil {
+			log.Println(err)
+		}
 		go cmd.Run()
 		for {
 			_, message, err := ws.ReadMessage()
@@ -41,8 +45,8 @@ func main() {
 				return
 			} else {
 				//send msg to qemu
-				cmd.Stdin = strings.NewReader(string(message))
-				fmt.Println(string(message))
+				stdin.Write(message)
+				//fmt.Println(string(message))
 			}
 		}
 	})
@@ -66,7 +70,7 @@ func readLoop(output io.Reader, ws *websocket.Conn) {
 		if len(str) == 0 {
 			continue
 		}
-		fmt.Print(str)
+		//fmt.Print(str)
 		ws.WriteMessage(websocket.TextMessage, []byte(str))
 	}
 }
