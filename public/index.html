@@ -1,4 +1,6 @@
-<script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'></script>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script>
 var server = "ws://arm.gamingrobot.net/ws"
 if (window.location.search === '?debug') {
@@ -7,10 +9,24 @@ if (window.location.search === '?debug') {
 var websocket = new WebSocket(server);
 websocket.onopen = function() {
     websocket.onmessage = function(message) {
-        $('#messages').append(message.data + "</br>");
+        $('#msgs').append(message.data + "</br>");
     };
 }
-
+$(document).ready(function() {
+    $("input").keypress(function(event) {
+        if (event.which == 13) {
+            event.preventDefault();
+            var val = $("#command").val()
+            console.log(val);
+            websocket.send(val);
+            $("#command").val('')
+        }
+    });
+});
 </script>
-
-<div id="messages"></div>
+</head>
+<body>
+    <div id="msgs" style="height:400px; overflow:auto"></div>
+    <input type="text" id="command" style="width:100%"/>
+</body>
+</html>

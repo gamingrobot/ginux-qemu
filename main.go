@@ -24,7 +24,8 @@ func main() {
 			return
 		}
 		//spawn qemu
-		cmd := exec.Command("qemu-system-arm", "-M", "versatilepb", "-m", "20M", "-nographic", "-readconfig", "qemu.conf")
+		//cmd := exec.Command("qemu-system-arm", "-M", "versatilepb", "-m", "20M", "-nographic", "-readconfig", "qemu.conf")
+		cmd := exec.Command("echo", "tacos")
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
 			log.Println(err)
@@ -41,7 +42,7 @@ func main() {
 			} else {
 				//send msg to qemu
 				cmd.Stdin = strings.NewReader(string(message))
-				fmt.Println(message)
+				fmt.Println(string(message))
 			}
 		}
 	})
@@ -65,7 +66,7 @@ func readLoop(output io.Reader, ws *websocket.Conn) {
 		if len(str) == 0 {
 			continue
 		}
-		//fmt.Print(str)
+		fmt.Print(str)
 		ws.WriteMessage(websocket.TextMessage, []byte(str))
 	}
 }
