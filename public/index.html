@@ -1,0 +1,16 @@
+<script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'></script>
+<script>
+var server = "ws://arm.gamingrobot.net/ws"
+if (window.location.search === '?debug') {
+    server = 'ws://localhost:3000/ws';
+}
+var websocket = new WebSocket(server);
+websocket.onopen = function() {
+    websocket.onmessage = function(message) {
+        $('#messages').append(message.data + "</br>");
+    };
+}
+
+</script>
+
+<div id="messages"></div>
