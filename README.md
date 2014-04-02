@@ -37,5 +37,5 @@ gzip -c rootfs.img > rootfs.img.gz
 ```
 
 ```
-qemu-system-arm -M versatilepb -m 20M -kernel linux-2.6.33/arch/arm/boot/zImage -initrd rootfs.img.gz -append "root=/dev/ram rdinit=/sbin/init console=ttyAMA0" -nographic
+qemu-system-arm -M versatilepb -m 20M -nographic -readconfig qemu.conf
 ```
