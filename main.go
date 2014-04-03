@@ -11,6 +11,7 @@ import (
 	//"os"
 	//"io/ioutil"
 	"os/exec"
+	"time"
 )
 
 func main() {
@@ -60,8 +61,12 @@ func main() {
 func readLoop(output io.Reader, ws *websocket.Conn) {
 	for {
 		bytes := make([]byte, 4) //just so we dont get unicode chopping errors
-		output.Read(bytes)
-		//fmt.Print(string(bytes))
+		_, err := output.Read(bytes)
+		if err != nil {
+			//fmt.Print(err)
+			time.Sleep(100 * time.Millisecond)
+			continue
+		}
 		ws.WriteMessage(websocket.TextMessage, bytes)
 	}
 	/*for {
