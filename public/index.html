@@ -1,34 +1,61 @@
-<html>
-<head>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<!doctype html>
+<title></title>
+<style>
+  html {
+    background: #555;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    font: 20px/1.5 sans-serif;
+  }
+
+  .terminal {
+    float: left;
+    border: #000 solid 5px;
+    font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
+    font-size: 11px;
+    color: #f0f0f0;
+    background: #000;
+  }
+
+  .terminal-cursor {
+    color: #000;
+    background: #f0f0f0;
+  }
+</style>
+<script src="term.js"></script>
 <script>
-var server = "ws://"+document.location.host+"/ws"
-var websocket = new WebSocket(server);
-websocket.onopen = function() {
-    websocket.onmessage = function(message) {
-        $('#msgs').append(message.data + "</br>");
-        $("#msgs").scrollTop($("#msgs")[0].scrollHeight);
+;(function() {
+  window.onload = function() {
+    var server = "ws://"+document.location.host+"/ws"
+    var websocket = new WebSocket(server);
+    websocket.onopen = function() {
+      var term = new Terminal({
+        cols: 160,
+        rows: 48,
+        useStyle: true,
+        screenKeys: true
+      });
+
+      websocket.onmessage = function (msg) {
+        console.log(msg.data);
+        term.write(msg.data);
+      }
+
+      term.on('data', function(data) {
+        console.log(data)
+        websocket.send(data)
+      });
+
+      term.on('title', function(title) {
+        document.title = title;
+      });
+
+      term.open(document.body);
+
+      term.write('\x1b[31mWelcome to term.js!\x1b[m\r\n');
     };
-}
-websocket.onclose = function(){
-	$('#error').empty().append("Lost connection to websocket");
-}
-$(document).ready(function() {
-    $("input").keypress(function(event) {
-        if (event.which == 13) {
-            event.preventDefault();
-            var val = $("#command").val()
-            console.log(val);
-            websocket.send(val + "\n");
-            $("#command").val('')
-        }
-    });
-});
+  };
+}).call(this);
 </script>
-</head>
-<body>
-    <div id="msgs" style="height:400px; overflow:auto"></div>
-    <input type="text" id="command" placeholder="#" style="width:100%"/>
-    <div id="error"></div>
-</body>
-</html>

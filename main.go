@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bufio"
+	//"bufio"
 	//"fmt"
 	"github.com/codegangsta/martini"
 	"github.com/gorilla/websocket"
@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	//"os"
+	//"io/ioutil"
 	"os/exec"
 )
 
@@ -46,6 +47,7 @@ func main() {
 			} else {
 				//send msg to qemu
 				stdin.Write(message)
+				//ws.WriteMessage(websocket.TextMessage, message)
 				//fmt.Println(string(message))
 			}
 		}
@@ -56,7 +58,24 @@ func main() {
 }
 
 func readLoop(output io.Reader, ws *websocket.Conn) {
-	r := bufio.NewReader(output)
+	for {
+		bytes := make([]byte, 4) //just so we dont get unicode chopping errors
+		output.Read(bytes)
+		//fmt.Print(string(bytes))
+		ws.WriteMessage(websocket.TextMessage, bytes)
+	}
+	/*for {
+		bytes, _ := ioutil.ReadAll(output)
+		fmt.Print(string(bytes))
+		ws.WriteMessage(websocket.TextMessage, bytes)
+	}*/
+	/*scanner := bufio.NewScanner(output)
+	for scanner.Scan() {
+		str := scanner.Bytes()
+		fmt.Println(string(str)) // Println will add back the final '\n'
+		ws.WriteMessage(websocket.TextMessage, str)
+	}*/
+	/*r := bufio.NewReader(output)
 	for {
 		str, err := r.ReadString('\n')
 
@@ -70,7 +89,20 @@ func readLoop(output io.Reader, ws *websocket.Conn) {
 		if len(str) == 0 {
 			continue
 		}
-		//fmt.Print(str)
+		fmt.Print(str)
 		ws.WriteMessage(websocket.TextMessage, []byte(str))
-	}
+	}*/
+	/*r := bufio.NewReader(output)
+	for {
+		abyte, err := r.ReadByte()
+		if err == io.EOF {
+			return
+		}
+		if err != nil {
+			log.Println("Read Line Error:", err)
+			continue
+		}
+		fmt.Print(string(abyte))
+		ws.WriteMessage(websocket.TextMessage, []byte{abyte})
+	}*/
 }
