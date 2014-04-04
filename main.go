@@ -17,7 +17,7 @@ import (
 	"unicode/utf8"
 )
 
-const MAX_VMS = 100
+const MAX_VMS = 20
 
 var currentVms int64 = 0
 
