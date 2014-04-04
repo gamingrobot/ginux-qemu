@@ -53,8 +53,6 @@
       });
 
       term.open(document.body);
-
-      term.write('\x1b[31mWelcome to term.js!\x1b[m\r\n');
     };
     websocket.onclose = function(){
  		$('#error').empty().append("Lost Connection to websocket");
