@@ -41,11 +41,13 @@ func main() {
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
 			log.Println(err)
+			return
 		}
 		go readLoop(stdout, ws)
 		stdin, err := cmd.StdinPipe()
 		if err != nil {
 			log.Println(err)
+			return
 		}
 		cmd.Start()
 		atomic.AddInt64(&currentVms, 1)
@@ -57,13 +59,12 @@ func main() {
 				//kill qemu
 				cmd.Process.Kill()
 				cmd.Process.Wait()
-				log.Println(err)
+				limit.Process.Wait() //dont zombie process
+				//log.Println(err)
 				return
 			} else {
 				//send msg to qemu
 				stdin.Write(message)
-				//ws.WriteMessage(websocket.TextMessage, message)
-				//fmt.Println(string(message))
 			}
 		}
 	})
