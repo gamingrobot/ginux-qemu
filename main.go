@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"bufio"
+	"bufio"
 	//"fmt"
 	"github.com/codegangsta/martini"
 	"github.com/gorilla/websocket"
@@ -11,7 +11,9 @@ import (
 	//"os"
 	//"io/ioutil"
 	"os/exec"
+	"strconv"
 	"time"
+	"unicode/utf8"
 )
 
 func main() {
@@ -27,7 +29,6 @@ func main() {
 		}
 		//spawn qemu
 		cmd := exec.Command("qemu-system-arm", "-M", "versatilepb", "-m", "20M", "-nographic", "-readconfig", "qemu.conf")
-		//cmd := exec.Command("bash")
 		stdout, err := cmd.StdoutPipe()
 		if err != nil {
 			log.Println(err)
@@ -37,7 +38,9 @@ func main() {
 		if err != nil {
 			log.Println(err)
 		}
-		go cmd.Run()
+		cmd.Start()
+		limit := exec.Command("cpulimit", "-p", strconv.FormatInt(int64(cmd.Process.Pid), 10), "-l", "10") //10% usage
+		limit.Start()
 		for {
 			_, message, err := ws.ReadMessage()
 			if err != nil {
@@ -59,55 +62,22 @@ func main() {
 }
 
 func readLoop(output io.Reader, ws *websocket.Conn) {
+	reader := bufio.NewReader(output)
+	buffer := []byte{}
 	for {
-		bytes := make([]byte, 4) //just so we dont get unicode chopping errors
-		_, err := output.Read(bytes)
+		b, err := reader.ReadByte()
+		if err == io.EOF {
+			return
+		}
 		if err != nil {
-			//fmt.Print(err)
 			time.Sleep(100 * time.Millisecond)
 			continue
 		}
-		ws.WriteMessage(websocket.TextMessage, bytes)
+		buffer = append(buffer, b)
+		valid := utf8.Valid(buffer)
+		if valid {
+			ws.WriteMessage(websocket.TextMessage, buffer)
+			buffer = []byte{}
+		}
 	}
-	/*for {
-		bytes, _ := ioutil.ReadAll(output)
-		fmt.Print(string(bytes))
-		ws.WriteMessage(websocket.TextMessage, bytes)
-	}*/
-	/*scanner := bufio.NewScanner(output)
-	for scanner.Scan() {
-		str := scanner.Bytes()
-		fmt.Println(string(str)) // Println will add back the final '\n'
-		ws.WriteMessage(websocket.TextMessage, str)
-	}*/
-	/*r := bufio.NewReader(output)
-	for {
-		str, err := r.ReadString('\n')
-
-		if err == io.EOF {
-			return
-		}
-		if err != nil {
-			log.Println("Read Line Error:", err)
-			continue
-		}
-		if len(str) == 0 {
-			continue
-		}
-		fmt.Print(str)
-		ws.WriteMessage(websocket.TextMessage, []byte(str))
-	}*/
-	/*r := bufio.NewReader(output)
-	for {
-		abyte, err := r.ReadByte()
-		if err == io.EOF {
-			return
-		}
-		if err != nil {
-			log.Println("Read Line Error:", err)
-			continue
-		}
-		fmt.Print(string(abyte))
-		ws.WriteMessage(websocket.TextMessage, []byte{abyte})
-	}*/
 }
