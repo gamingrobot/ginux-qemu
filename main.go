@@ -19,7 +19,7 @@ import (
 
 const MAX_VMS = 100
 
-var currentVms = 0
+var currentVms int64 = 0
 
 func main() {
 	m := martini.Classic()
