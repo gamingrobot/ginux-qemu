@@ -1,3 +1,12 @@
+ginux
+===
+Run Linux in the browser
+
+http://arm.gamingrobot.net
+
+Using your own kernel/busybox (Optional)
+===
+
 ### Compile kernel
 http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.33.tar.bz2
 ```
