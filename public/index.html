@@ -1,10 +1,6 @@
 <!doctype html>
 <title></title>
 <style>
-  html {
-    background: #555;
-  }
-
   h1 {
     margin-bottom: 20px;
     font: 20px/1.5 sans-serif;
@@ -33,8 +29,8 @@
     var websocket = new WebSocket(server);
     websocket.onopen = function() {
       var term = new Terminal({
-        cols: 160,
-        rows: 48,
+        cols: 120,
+        rows: 36,
         useStyle: true,
         screenKeys: true
       });
@@ -51,16 +47,17 @@
         document.title = title;
       });
 
-      term.open(document.body);
+      term.open(document.getElementById("term"));
     };
     websocket.onclose = function(){
  		   $('#error').empty().append("Lost Connection to websocket");
  	  };
-    websocket.onerror = function(){
-       $('#error').empty().append("Lost Connection to websocket");
+    websocket.onerror = function(err){
+       $('#error').empty().append("Error: " + err.data);
     };
   };
 }).call(this);
 </script>
-<div id="error"></div>
 <a href="https://github.com/gamingrobot/ginux-qemu">Source Code</a>
+<div id="error" style="color:red"></div>
+<div id="term"></div>
