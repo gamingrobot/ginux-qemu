@@ -60,6 +60,7 @@ func main() {
 				cmd.Process.Kill()
 				cmd.Process.Wait()
 				limit.Process.Wait() //dont zombie process
+				atomic.AddInt64(&currentVms, -1)
 				//log.Println(err)
 				return
 			} else {
