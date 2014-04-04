@@ -13,6 +13,7 @@ http://www.kernel.org/pub/linux/kernel/v2.6/linux-2.6.33.tar.bz2
 make ARCH=arm versatile_defconfig
 make ARCH=arm menuconfig
 	Remove module support
+make ARCH=arm CROSS_COMPILE=arm-none-eabi- all
 ```
 
 ```
