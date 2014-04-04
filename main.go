@@ -12,9 +12,14 @@ import (
 	//"io/ioutil"
 	"os/exec"
 	"strconv"
+	"sync/atomic"
 	"time"
 	"unicode/utf8"
 )
+
+const MAX_VMS = 100
+
+var currentVms = 0
 
 func main() {
 	m := martini.Classic()
@@ -25,6 +30,10 @@ func main() {
 			return
 		} else if err != nil {
 			log.Println(err)
+			return
+		}
+		if currentVms >= MAX_VMS {
+			http.Error(w, "Over Capacity", 400)
 			return
 		}
 		//spawn qemu
@@ -39,6 +48,7 @@ func main() {
 			log.Println(err)
 		}
 		cmd.Start()
+		atomic.AddInt64(&currentVms, 1)
 		limit := exec.Command("cpulimit", "-p", strconv.FormatInt(int64(cmd.Process.Pid), 10), "-l", "10") //10% usage
 		limit.Start()
 		for {
