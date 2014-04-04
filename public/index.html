@@ -25,6 +25,7 @@
   }
 </style>
 <script src="term.min.js"></script>
+<script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'></script>
 <script>
 ;(function() {
   window.onload = function() {
@@ -39,12 +40,10 @@
       });
 
       websocket.onmessage = function (msg) {
-        console.log(msg.data);
         term.write(msg.data);
       }
 
       term.on('data', function(data) {
-        console.log(data)
         websocket.send(data)
       });
 
@@ -64,3 +63,4 @@
 }).call(this);
 </script>
 <div id="error"></div>
+<a href="https://github.com/gamingrobot/ginux-qemu">Source Code</a>
