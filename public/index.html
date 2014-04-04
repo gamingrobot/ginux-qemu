@@ -55,8 +55,11 @@
       term.open(document.body);
     };
     websocket.onclose = function(){
- 		$('#error').empty().append("Lost Connection to websocket");
- 	};
+ 		   $('#error').empty().append("Lost Connection to websocket");
+ 	  };
+    websocket.onerror = function(){
+       $('#error').empty().append("Lost Connection to websocket");
+    };
   };
 }).call(this);
 </script>
