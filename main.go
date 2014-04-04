@@ -56,7 +56,7 @@ func main() {
 			if err != nil {
 				//kill qemu
 				cmd.Process.Kill()
-				cmd.Wait()
+				cmd.Process.Wait()
 				log.Println(err)
 				return
 			} else {
