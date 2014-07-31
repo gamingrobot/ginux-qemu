@@ -69,9 +69,8 @@ func main() {
 			}
 		}
 	})
-	address := "localhost:3000"
-	log.Println("Martini started on", address)
-	log.Fatal(http.ListenAndServe(address, m))
+	log.Println("Martini started")
+	log.Fatal(http.ListenAndServe(":3000", m))
 }
 
 func readLoop(output io.Reader, ws *websocket.Conn) {
